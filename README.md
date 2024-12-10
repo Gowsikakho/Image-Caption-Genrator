@@ -7,4 +7,7 @@ A Flask-based web application that generates captions for images using AI.
 - AI-powered image caption generation
 - Drag and drop image upload interface
 - Caption history tracking
+- Elegant golden-themed UI
+
+## Installation
 
