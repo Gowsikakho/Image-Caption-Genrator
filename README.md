@@ -11,3 +11,7 @@ A Flask-based web application that generates captions for images using AI.
 
 ## Installation
 
+1. Clone the repository
+2. Install dependencies
+3. Run the application
+
