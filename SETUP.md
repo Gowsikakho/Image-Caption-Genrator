@@ -7,3 +7,5 @@
 
 ## Installation Steps
 
+1. Install required packages from requirements.txt
+
