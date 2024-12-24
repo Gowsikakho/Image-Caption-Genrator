@@ -7,4 +7,5 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Initial release with image caption generation
 - Flask web interface with drag-and-drop upload
+- Caption history tracking feature
 
