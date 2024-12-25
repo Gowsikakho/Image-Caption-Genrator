@@ -9,3 +9,6 @@ All notable changes to this project will be documented in this file.
 - Flask web interface with drag-and-drop upload
 - Caption history tracking feature
 
+### Technical
+- BLIP model integration for image captioning
+
