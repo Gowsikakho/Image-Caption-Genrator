@@ -11,4 +11,5 @@ All notable changes to this project will be documented in this file.
 
 ### Technical
 - BLIP model integration for image captioning
+- RESTful API endpoint for caption generation
 
