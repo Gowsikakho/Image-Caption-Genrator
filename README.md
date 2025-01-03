@@ -17,3 +17,5 @@ A Flask-based web application that generates captions for images using AI.
 
 ## Usage
 
+Upload an image using the web interface to generate captions automatically.
+
