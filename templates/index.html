@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Caption Generator</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <!-- Background Image -->
+    <div class="background"></div>
+
+    <!-- Glassmorphism Dialog Box -->
+    <div class="dialog-box">
+      <h1>Image Caption Generator</h1>
+
+      <!-- Buttons for uploading and generating captions -->
+
+      <div class="button-container">
+        <input type="file" id="fileInput" style="display: none" />
+        <button id="uploadBtn">Upload Image</button>
+        <button id="generateBtn" disabled>Generate</button>
+      </div>
+      <p id="feedback"></p>
+
+      <!-- Feedback message -->
+      <p id="feedback" class="hidden">
+        Image uploaded successfully! Click Generate.
+      </p>
+
+      <!-- Caption Result -->
+      <p id="captionResult" class="hidden"></p>
+    </div>
+    <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
