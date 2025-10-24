@@ -1,0 +1,92 @@
+/* Full-Page Background */
+*{
+    font-family: poppins;
+}
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    background: url('IMAGE-CAPTION-GENERATOR.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden;
+}
+
+/* Glassmorphism Effect */
+.dialog-box {
+    backdrop-filter: blur(15px) saturate(150%);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px 20px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-box h1 {
+    font-size: 24px;
+    color: #ffffff;
+}
+
+/* Button Styling */
+/* Flex container for buttons */
+.button-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    justify-content: center; /* Center the buttons horizontally */
+    align-items: center; /* Align items vertically in the center */
+}
+
+/* Button Styling */
+button {
+    /* padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background: rgba(0, 123, 255, 0.7);
+    border: none;
+    border-radius: 5px;
+    
+    transition: background-color 0.3s ease; */
+
+    backdrop-filter: blur(15px) saturate(150%);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px 20px;
+    width: 350px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+button:disabled {
+    background: rgba(150, 150, 150, 0.5);
+    cursor: not-allowed;
+}
+
+button:hover:enabled {
+    background: rgba(159, 150, 150, 0.5);
+}
+
+/* Feedback Animation */
+#feedback, #captionResult {
+    color: #ffffff;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#feedback.show, #captionResult.show {
+    opacity: 1;
+}
+
+/* Animation for smooth reveal */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
