@@ -3,36 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Caption Generator</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Luxury AI Caption Generator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <!-- Background Image -->
+    <!-- Background -->
     <div class="background"></div>
 
-    <!-- Glassmorphism Dialog Box -->
-    <div class="dialog-box">
-      <h1>Image Caption Generator</h1>
+    <!-- History Icon -->
+    <i class="fas fa-clock history-icon" id="historyIcon"></i>
 
-      <!-- Buttons for uploading and generating captions -->
+    <!-- History Panel -->
+    <div class="history-panel" id="historyPanel">
+      <h3>Caption History</h3>
+      <ul id="historyList"></ul>
+    </div>
 
-      <div class="button-container">
-        <input type="file" id="fileInput" style="display: none" />
-        <button id="uploadBtn">Upload Image</button>
-        <button id="generateBtn" disabled>Generate</button>
+    <!-- Main Container -->
+    <div class="container">
+      <h1 class="title">AI Caption Generator</h1>
+      <p class="subtitle">Elegant • Intelligent • Golden</p>
+
+      <!-- Upload Zone -->
+      <div id="dropZone" class="drop-zone">
+        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+        <p>
+          Drop an image here or
+          <span class="upload-text">click to upload</span>
+        </p>
+        <input type="file" id="fileInput" accept="image/*" hidden />
       </div>
-      <p id="feedback"></p>
 
-      <!-- Feedback message -->
-      <p id="feedback" class="hidden">
+      <!-- Generate Button -->
+      <button id="generateBtn" class="gold-btn" disabled>
+        Generate Caption
+      </button>
+
+      <!-- Feedback -->
+      <p id="feedback" class="feedback hidden">
         Image uploaded successfully! Click Generate.
       </p>
 
-      <!-- Caption Result -->
-      <p id="captionResult" class="hidden"></p>
+      <!-- Caption Output -->
+      <div id="captionBox" class="caption-box hidden">
+        <h3>Generated Caption</h3>
+        <p id="captionResult"></p>
+      </div>
     </div>
-    <script src="/static/script.js"></script>
+
+    <script>
+      const historyIcon = document.getElementById("historyIcon");
+      const historyPanel = document.getElementById("historyPanel");
+      const historyList = document.getElementById("historyList");
+      let captionHistory = [];
+
+      historyIcon.addEventListener("click", () => {
+        historyPanel.style.display =
+          historyPanel.style.display === "block" ? "none" : "block";
+      });
+
+      function addToHistory(caption) {
+        captionHistory.unshift(caption); // newest first
+        renderHistory();
+      }
+
+      function renderHistory() {
+        historyList.innerHTML = "";
+        captionHistory.forEach((c) => {
+          const li = document.createElement("li");
+          li.textContent = c;
+          historyList.appendChild(li);
+        });
+      }
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>
