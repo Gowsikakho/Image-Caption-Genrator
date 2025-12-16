@@ -8,4 +8,5 @@
 ## Installation Steps
 
 1. Clone the repository from GitHub
+2. Install dependencies: `pip install -r requirements.txt`
 
