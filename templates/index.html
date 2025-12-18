@@ -1,89 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Luxury AI Caption Generator</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-    <script
-      src="https://kit.fontawesome.com/a076d05399.js"
-      crossorigin="anonymous"
-    ></script>
-  </head>
-  <body>
-    <!-- Background -->
-    <div class="background"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Luxury AI Caption Generator</title>
+  
+  <!-- FontAwesome (CORS-safe) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <!-- Background -->
+  <div class="background"></div>
 
-    <!-- History Icon -->
-    <i class="fas fa-clock history-icon" id="historyIcon"></i>
+  <!-- History Icon -->
+  <i class="fas fa-clock history-icon" id="historyIcon"></i>
 
-    <!-- History Panel -->
-    <div class="history-panel" id="historyPanel">
-      <h3>Caption History</h3>
-      <ul id="historyList"></ul>
-    </div>
+  <!-- History Panel -->
+  <div class="history-panel" id="historyPanel">
+    <h3>Caption History</h3>
+    <ul id="historyList"></ul>
+  </div>
 
-    <!-- Main Container -->
-    <div class="container">
-      <h1 class="title">AI Caption Generator</h1>
-      <p class="subtitle">Elegant • Intelligent • Golden</p>
+  <!-- Main Container -->
+  <div class="container">
+    <h1 class="title">AI Caption Generator</h1>
+    <p class="subtitle">Elegant • Intelligent • Golden</p>
 
-      <!-- Upload Zone -->
-      <div id="dropZone" class="drop-zone">
-        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-        <p>
-          Drop an image here or
-          <span class="upload-text">click to upload</span>
-        </p>
-        <input type="file" id="fileInput" accept="image/*" hidden />
-      </div>
-
-      <!-- Generate Button -->
-      <button id="generateBtn" class="gold-btn" disabled>
-        Generate Caption
-      </button>
-
-      <!-- Feedback -->
-      <p id="feedback" class="feedback hidden">
-        Image uploaded successfully! Click Generate.
+    <!-- Upload Zone -->
+    <div id="dropZone" class="drop-zone">
+      <i class="fas fa-cloud-upload-alt upload-icon"></i>
+      <p>
+        Drop an image here or
+        <span class="upload-text">click to upload</span>
       </p>
-
-      <!-- Caption Output -->
-      <div id="captionBox" class="caption-box hidden">
-        <h3>Generated Caption</h3>
-        <p id="captionResult"></p>
-      </div>
     </div>
 
-    <script>
-      const historyIcon = document.getElementById("historyIcon");
-      const historyPanel = document.getElementById("historyPanel");
-      const historyList = document.getElementById("historyList");
-      let captionHistory = [];
+    <!-- Generate Button -->
+    <button id="generateBtn" class="gold-btn" disabled>
+      Generate Caption
+    </button>
 
-      historyIcon.addEventListener("click", () => {
-        historyPanel.style.display =
-          historyPanel.style.display === "block" ? "none" : "block";
-      });
+    <!-- Feedback -->
+    <p id="feedback" class="feedback hidden"></p>
 
-      function addToHistory(caption) {
-        captionHistory.unshift(caption); // newest first
-        renderHistory();
-      }
+    <!-- Caption Output -->
+    <div id="captionBox" class="caption-box hidden">
+      <h3>Generated Caption</h3>
+      <p id="captionResult"></p>
+    </div>
+  </div>
 
-      function renderHistory() {
-        historyList.innerHTML = "";
-        captionHistory.forEach((c) => {
-          const li = document.createElement("li");
-          li.textContent = c;
-          historyList.appendChild(li);
-        });
-      }
-    </script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
+  <!-- External JS -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
 </html>

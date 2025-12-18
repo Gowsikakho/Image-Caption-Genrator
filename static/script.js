@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const uploadBtn = document.getElementById("uploadBtn");
+  // Elements
+  const dropZone = document.getElementById("dropZone");
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "image/*";
@@ -9,20 +10,48 @@ document.addEventListener("DOMContentLoaded", () => {
   const generateBtn = document.getElementById("generateBtn");
   const feedback = document.getElementById("feedback");
   const captionResult = document.getElementById("captionResult");
+  const captionBox = document.getElementById("captionBox");
 
-  // Show file picker on button click
-  uploadBtn.addEventListener("click", () => fileInput.click());
+  // History
+  const historyIcon = document.getElementById("historyIcon");
+  const historyPanel = document.getElementById("historyPanel");
+  const historyList = document.getElementById("historyList");
+  let captionHistory = [];
 
-  // Process file upload
+  // Toggle history panel
+  historyIcon.addEventListener("click", () => {
+    historyPanel.style.display =
+      historyPanel.style.display === "block" ? "none" : "block";
+  });
+
+  function addToHistory(caption) {
+    captionHistory.unshift(caption);
+    renderHistory();
+  }
+
+  function renderHistory() {
+    historyList.innerHTML = "";
+    captionHistory.forEach((c) => {
+      const li = document.createElement("li");
+      li.textContent = c;
+      historyList.appendChild(li);
+    });
+  }
+
+  // Open file picker when dropZone clicked
+  dropZone.addEventListener("click", () => fileInput.click());
+
+  // Handle file selection
   fileInput.addEventListener("change", () => {
     if (fileInput.files.length > 0) {
-      feedback.classList.add("show");
+      feedback.classList.remove("hidden");
       feedback.textContent = "Image uploaded successfully! Click Generate.";
       generateBtn.disabled = false;
-      captionResult.classList.remove("show");
+      captionBox.classList.add("hidden");
     }
   });
 
+  // Generate caption
   generateBtn.addEventListener("click", async () => {
     if (fileInput.files.length === 0) {
       feedback.textContent = "Please upload an image first.";
@@ -30,12 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     feedback.textContent = "Generating caption...";
-    captionResult.classList.remove("show");
+    captionBox.classList.add("hidden");
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
 
-    // Display loading state
     generateBtn.textContent = "Loading...";
     generateBtn.disabled = true;
 
@@ -53,24 +81,24 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const result = await response.json();
-
       if (result.caption) {
-        captionResult.textContent = `Caption: ${result.caption}`;
-        captionResult.classList.add("show");
+        captionResult.textContent = result.caption;
+        captionBox.classList.remove("hidden");
         feedback.textContent = "Caption generated successfully!";
+        addToHistory(result.caption);
       } else {
         captionResult.textContent = "No caption generated.";
-        captionResult.classList.add("show");
+        captionBox.classList.remove("hidden");
         feedback.textContent = "Error generating caption. Please try again.";
       }
 
       generateBtn.textContent = "Regenerate";
     } catch (error) {
       feedback.textContent = "Error generating caption. Please try again.";
-      console.error("Error:", error);
+      console.error(error);
     } finally {
       generateBtn.disabled = false;
-      fileInput.value = ""; // Clear file input to allow re-uploading
+      fileInput.value = ""; // Reset file input
     }
   });
 });
