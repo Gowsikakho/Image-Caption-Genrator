@@ -9,3 +9,7 @@ Thank you for your interest in contributing to this project!
 3. Make your changes
 4. Submit a pull request
 
+## Code Style
+
+- Follow PEP 8 for Python code
+
