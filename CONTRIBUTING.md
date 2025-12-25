@@ -12,4 +12,5 @@ Thank you for your interest in contributing to this project!
 ## Code Style
 
 - Follow PEP 8 for Python code
+- Use meaningful variable and function names
 
