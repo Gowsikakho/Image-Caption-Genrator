@@ -9,3 +9,12 @@ Generates a caption for an uploaded image.
 **Request:** multipart/form-data with image file
 **Response:** JSON object with caption and image URL
 
+### Example Response
+
+```json
+{
+  "caption": "a person standing on a beach",
+  "image_url": "/static/uploads/image.jpg"
+}
+```
+
