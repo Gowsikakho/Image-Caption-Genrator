@@ -1,35 +1,47 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Elements
+  // Elements with null checks
   const dropZone = document.getElementById("dropZone");
+  const generateBtn = document.getElementById("generateBtn");
+  const feedback = document.getElementById("feedback");
+  const captionResult = document.getElementById("captionResult");
+  const captionBox = document.getElementById("captionBox");
+  const historyIcon = document.getElementById("historyIcon");
+  const historyPanel = document.getElementById("historyPanel");
+  const historyList = document.getElementById("historyList");
+  
+  // Check if all required elements exist
+  if (!dropZone || !generateBtn || !feedback || !captionResult || !captionBox) {
+    console.error('Required DOM elements not found');
+    return;
+  }
+  // Create file input
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept = "image/*";
   fileInput.style.display = "none";
   document.body.appendChild(fileInput);
 
-  const generateBtn = document.getElementById("generateBtn");
-  const feedback = document.getElementById("feedback");
-  const captionResult = document.getElementById("captionResult");
-  const captionBox = document.getElementById("captionBox");
-
-  // History
-  const historyIcon = document.getElementById("historyIcon");
-  const historyPanel = document.getElementById("historyPanel");
-  const historyList = document.getElementById("historyList");
   let captionHistory = [];
 
   // Toggle history panel
-  historyIcon.addEventListener("click", () => {
-    historyPanel.style.display =
-      historyPanel.style.display === "block" ? "none" : "block";
-  });
+  if (historyIcon && historyPanel) {
+    historyIcon.addEventListener("click", () => {
+      historyPanel.style.display =
+        historyPanel.style.display === "block" ? "none" : "block";
+    });
+  }
 
   function addToHistory(caption) {
     captionHistory.unshift(caption);
+    // Limit history to 50 entries to prevent memory issues
+    if (captionHistory.length > 50) {
+      captionHistory = captionHistory.slice(0, 50);
+    }
     renderHistory();
   }
 
   function renderHistory() {
+    if (!historyList) return;
     historyList.innerHTML = "";
     captionHistory.forEach((c) => {
       const li = document.createElement("li");
