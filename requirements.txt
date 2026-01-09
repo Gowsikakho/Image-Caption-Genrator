@@ -1,8 +1,0 @@
-Flask==2.3.3
-flask-cors==4.0.0
-transformers==4.35.2
-torch==2.1.1
-torchvision==0.16.1
-Pillow==10.1.0
-requests==2.31.0
-Werkzeug==2.3.7
