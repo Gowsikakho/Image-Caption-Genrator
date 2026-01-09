@@ -9,6 +9,7 @@ import logging
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['MAX_CONTENT_LENGTH'] = Config.MAX_CONTENT_LENGTH
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -28,6 +29,11 @@ def index():
     """Serve the frontend HTML page."""
     return render_template("index.html")
 
+@app.errorhandler(413)
+def too_large(error):
+    """Handle file too large error."""
+    return jsonify({"error": "File too large. Maximum size is 16MB."}), 413
+
 @app.route("/generate_caption", methods=["POST"])
 def generate():
     """Handles image upload and caption generation."""
@@ -45,24 +51,32 @@ def generate():
 
         # Secure filename and generate unique name
         filename = secure_filename(file.filename)
+        if not filename:
+            filename = "uploaded_image"
         unique_filename = f"{uuid.uuid4()}_{filename}"
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         
         # Save file locally
         file.save(file_path)
-        logger.info(f"File saved: {unique_filename}")
+        logger.info("File saved: %s", unique_filename)
 
         # Generate caption
         caption = generate_caption(file_path)
+        
+        # Clean up uploaded file after processing
+        try:
+            os.remove(file_path)
+            logger.info("File cleaned up: %s", unique_filename)
+        except OSError as cleanup_error:
+            logger.warning("Could not remove file %s: %s", unique_filename, cleanup_error)
 
         # Return caption JSON response
         return jsonify({
-            "caption": caption,
-            "image_url": f"/{file_path}"
+            "caption": caption
         })
     
-    except Exception as e:
-        logger.error(f"Error processing request: {str(e)}")
+    except Exception as error:
+        logger.error("Error processing request: %s", str(error))
         return jsonify({"error": "An error occurred while processing your request"}), 500
 
 if __name__ == "__main__":

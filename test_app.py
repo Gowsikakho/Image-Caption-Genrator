@@ -25,7 +25,7 @@ class ImageCaptionGeneratorTestCase(unittest.TestCase):
     
     def test_generate_caption_empty_filename(self):
         """Test caption generation with empty filename."""
-        data = {'file': (tempfile.NamedTemporaryFile(), '')}
+        data = {'file': (open(__file__, 'rb'), '')}
         response = self.app.post('/generate_caption', data=data)
         self.assertEqual(response.status_code, 400)
         self.assertIn(b'No selected file', response.data)

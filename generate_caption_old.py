@@ -9,21 +9,12 @@ from transformers import BlipProcessor, BlipForConditionalGeneration
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Global model variables for performance
-PROCESSOR = None
-MODEL = None
-
-
-def _load_model():
-    """Load the BLIP model and processor."""
-    global PROCESSOR, MODEL
-    if PROCESSOR is None or MODEL is None:
-        PROCESSOR = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-        MODEL = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
-
+# Load the model and processor (public access, no token needed)
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
 def generate_caption(image_path):
-    """Generate a caption for the given image.
+    """Generates a caption for the given image.
     
     Args:
         image_path (str): Path to the image file
@@ -31,15 +22,13 @@ def generate_caption(image_path):
     Returns:
         str: Generated caption or error message
     """
-    _load_model()
-    
     try:
-        # Validate file exists
+        # Validate file exists and is within allowed directory
         if not os.path.exists(image_path):
             logger.error("Image file not found: %s", image_path)
             return "Image file not found."
         
-        # Path traversal protection
+        # Basic path traversal protection
         abs_image_path = os.path.abspath(image_path)
         abs_upload_dir = os.path.abspath('static/uploads')
         
@@ -47,11 +36,10 @@ def generate_caption(image_path):
             logger.error("Invalid file path detected: %s", image_path)
             return "Invalid file path."
         
-        # Generate caption
         with Image.open(image_path) as image:
-            inputs = PROCESSOR(images=image, return_tensors="pt")
-            output = MODEL.generate(**inputs)
-            caption = PROCESSOR.decode(output[0], skip_special_tokens=True)
+            inputs = processor(images=image, return_tensors="pt")
+            output = model.generate(**inputs)
+            caption = processor.decode(output[0], skip_special_tokens=True)
         
         logger.info("Caption generated for %s", image_path)
         return caption
@@ -64,6 +52,6 @@ def generate_caption(image_path):
         logger.error("File system error: %s", os_error)
         return "Error accessing the image file."
         
-    except Exception as error:
+    except Exception as error:  # pylint: disable=broad-except
         logger.error("Error generating caption: %s", error)
         return "An error occurred while generating the caption."
