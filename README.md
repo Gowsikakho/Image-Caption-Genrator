@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="static/image.png" alt="CaptionGen Preview" />
+</p>
+
 # Image Caption Generator
 
 An AI-powered web application that generates descriptive captions for uploaded images using the BLIP (Bootstrapping Language-Image Pre-training) model from Salesforce.
