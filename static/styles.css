@@ -85,6 +85,36 @@ body, html {
   font-weight: 600;
 }
 
+/* ===== LANGUAGE CONTROL ===== */
+.language-control {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.language-control label {
+  display: block;
+  margin-bottom: 8px;
+  color: #a67c00;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.language-select {
+  width: 100%;
+  border: 1px solid rgba(184, 134, 11, 0.5);
+  border-radius: 10px;
+  background: rgba(255, 248, 220, 0.9);
+  color: #5f4600;
+  padding: 10px 12px;
+  font-size: 15px;
+  outline: none;
+}
+
+.language-select:focus {
+  border-color: #b8860b;
+  box-shadow: 0 0 0 2px rgba(184, 134, 11, 0.15);
+}
+
 /* ===== BUTTON ===== */
 .gold-btn {
   background: linear-gradient(90deg, #ffd700, #c9a200);

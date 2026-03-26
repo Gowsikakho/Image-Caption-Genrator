@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const feedback = document.getElementById("feedback");
   const captionResult = document.getElementById("captionResult");
   const captionBox = document.getElementById("captionBox");
+  const languageSelect = document.getElementById("languageSelect");
+  const modelQualitySelect = document.getElementById("modelQualitySelect");
   const historyIcon = document.getElementById("historyIcon");
   const historyPanel = document.getElementById("historyPanel");
   const historyList = document.getElementById("historyList");
   
   // Check if all required elements exist
-  if (!dropZone || !generateBtn || !feedback || !captionResult || !captionBox) {
+  if (!dropZone || !generateBtn || !feedback || !captionResult || !captionBox || !languageSelect || !modelQualitySelect) {
     console.error('Required DOM elements not found');
     return;
   }
@@ -123,6 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const formData = new FormData();
     formData.append("file", fileInput.files[0]);
+    formData.append("language", languageSelect.value);
+    formData.append("model_quality", modelQualitySelect.value);
 
     generateBtn.textContent = "Loading...";
     generateBtn.disabled = true;

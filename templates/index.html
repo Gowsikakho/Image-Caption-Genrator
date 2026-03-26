@@ -41,6 +41,42 @@
       </p>
     </div>
 
+    <!-- Language Selection -->
+    <div class="language-control">
+      <label for="languageSelect">Caption language</label>
+      {% set langs = supported_languages if supported_languages is defined else {
+        "en": {"label": "English"},
+        "fr": {"label": "French"},
+        "es": {"label": "Spanish"},
+        "de": {"label": "German"},
+        "it": {"label": "Italian"}
+      } %}
+      <select id="languageSelect" class="language-select">
+        {% for code, info in langs.items() %}
+        <option value="{{ code }}" {% if code == "en" %}selected{% endif %}>
+          {{ info.label }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Model Quality Selection -->
+    <div class="language-control">
+      <label for="modelQualitySelect">Model quality</label>
+      {% set models = caption_models if caption_models is defined else {
+        "fast": {"label": "BLIP Base (Faster)"},
+        "balanced": {"label": "Balanced Ensemble (Better quality, moderate speed)"},
+        "high": {"label": "BLIP Large (More accurate, slower)"}
+      } %}
+      <select id="modelQualitySelect" class="language-select">
+        {% for code, info in models.items() %}
+        <option value="{{ code }}" {% if code == "fast" %}selected{% endif %}>
+          {{ info.label }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
     <!-- Generate Button -->
     <button id="generateBtn" class="gold-btn" disabled>
       Generate Caption

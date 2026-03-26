@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from generate_caption import generate_caption
+from generate_caption import CAPTION_MODELS, SUPPORTED_LANGUAGES, generate_caption
 from config import Config
 import os
 import uuid
 import logging
+import traceback
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -27,16 +28,36 @@ def allowed_file(filename):
 @app.route("/")
 def index():
     """Serve the frontend HTML page."""
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        supported_languages=SUPPORTED_LANGUAGES,
+        caption_models=CAPTION_MODELS,
+    )
 
 @app.errorhandler(413)
 def too_large(error):
     """Handle file too large error."""
     return jsonify({"error": "File too large. Maximum size is 16MB."}), 413
 
+
+@app.errorhandler(Exception)
+def handle_unexpected_error(error):
+    """Handle unhandled exceptions and log full traceback."""
+    logger.error("Unhandled exception: %s", error)
+    logger.error(traceback.format_exc())
+
+    if request.path == "/generate_caption":
+        return jsonify({"error": "Unexpected server error while generating caption."}), 500
+
+    return (
+        "Unexpected server error. Please restart the server and try again.",
+        500,
+    )
+
 @app.route("/generate_caption", methods=["POST"])
 def generate():
     """Handles image upload and caption generation."""
+    file_path = None
     try:
         if 'file' not in request.files:
             return jsonify({"error": "No file part"}), 400
@@ -60,24 +81,42 @@ def generate():
         file.save(file_path)
         logger.info("File saved: %s", unique_filename)
 
+        language = request.form.get("language", "en").strip().lower()
+        if language not in SUPPORTED_LANGUAGES:
+            return jsonify({"error": "Unsupported language selected."}), 400
+
+        model_quality = request.form.get("model_quality", "fast").strip().lower()
+        if model_quality not in CAPTION_MODELS:
+            return jsonify({"error": "Unsupported model quality selected."}), 400
+
         # Generate caption
-        caption = generate_caption(file_path)
-        
-        # Clean up uploaded file after processing
-        try:
-            os.remove(file_path)
-            logger.info("File cleaned up: %s", unique_filename)
-        except OSError as cleanup_error:
-            logger.warning("Could not remove file %s: %s", unique_filename, cleanup_error)
+        caption, error_message = generate_caption(
+            file_path,
+            language=language,
+            model_quality=model_quality,
+        )
+
+        if error_message:
+            return jsonify({"error": error_message}), 400
 
         # Return caption JSON response
         return jsonify({
-            "caption": caption
+            "caption": caption,
+            "language": language,
+            "model_quality": model_quality,
         })
     
     except Exception as error:
         logger.error("Error processing request: %s", str(error))
+        logger.error(traceback.format_exc())
         return jsonify({"error": "An error occurred while processing your request"}), 500
+    finally:
+        if file_path and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                logger.info("File cleaned up: %s", os.path.basename(file_path))
+            except OSError as cleanup_error:
+                logger.warning("Could not remove file %s: %s", file_path, cleanup_error)
 
 if __name__ == "__main__":
     app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])
