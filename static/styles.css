@@ -6,7 +6,8 @@
   font-family: "Poppins", sans-serif;
 }
 
-body, html {
+body,
+html {
   height: 100%;
   overflow: hidden;
   color: #000;
@@ -16,12 +17,14 @@ body, html {
 .background {
   position: fixed;
   inset: 0;
-  background-image: url("background.jpg"); /* your background image */
+  background-image: url("background.jpg");
+  /* your background image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   z-index: -1;
-  filter: none; /* keep full clarity */
+  filter: none;
+  /* keep full clarity */
   opacity: 1;
 }
 
@@ -30,9 +33,11 @@ body, html {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* perfect center */
+  transform: translate(-50%, -50%);
+  /* perfect center */
   z-index: 1;
-  background: rgba(255, 248, 220, 0.85); /* slight transparency for golden glow */
+  background: rgba(255, 248, 220, 0.85);
+  /* slight transparency for golden glow */
   border: 1px solid rgba(184, 134, 11, 0.3);
   border-radius: 25px;
   padding: 40px 60px;
@@ -183,7 +188,7 @@ body, html {
   background: rgba(255, 248, 220, 0.95);
   border: 1px solid #b8860b;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 1rem;
   overflow-y: auto;
   display: none;
@@ -209,4 +214,25 @@ body, html {
 /* ===== UTILITY ===== */
 .hidden {
   display: none;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 520px) {
+  .container {
+    width: 95vw;
+    padding: 24px 20px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .drop-zone {
+    padding: 28px;
+  }
+
+  body,
+  html {
+    overflow: auto;
+  }
 }

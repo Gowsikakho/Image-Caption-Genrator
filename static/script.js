@@ -10,13 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const historyIcon = document.getElementById("historyIcon");
   const historyPanel = document.getElementById("historyPanel");
   const historyList = document.getElementById("historyList");
-  
+
   // Check if all required elements exist
   if (!dropZone || !generateBtn || !feedback || !captionResult || !captionBox || !languageSelect || !modelQualitySelect) {
     console.error('Required DOM elements not found');
     return;
   }
-  
+
   // Create file input
   const fileInput = document.createElement("input");
   fileInput.type = "file";
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fileInput.style.display = "none";
   document.body.appendChild(fileInput);
 
-  let captionHistory = [];
+  let captionHistory = JSON.parse(localStorage.getItem("captionHistory") || "[]");
 
   // Toggle history panel
   if (historyIcon && historyPanel) {
@@ -34,18 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Render persisted history on load
+  renderHistory();
+
   function addToHistory(caption) {
     captionHistory.unshift(caption);
     // Limit history to 50 entries to prevent memory issues
     if (captionHistory.length > 50) {
       captionHistory = captionHistory.slice(0, 50);
     }
+    localStorage.setItem("captionHistory", JSON.stringify(captionHistory));
     renderHistory();
   }
 
   function renderHistory() {
     if (!historyList) return;
-    
+
     historyList.innerHTML = "";
     captionHistory.forEach((caption) => {
       const li = document.createElement("li");
@@ -56,29 +60,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Open file picker when dropZone clicked
   dropZone.addEventListener("click", () => fileInput.click());
-  
+
   // Drag and drop functionality
   dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
     dropZone.classList.add("dragover");
   });
-  
+
   dropZone.addEventListener("dragleave", (e) => {
     e.preventDefault();
     dropZone.classList.remove("dragover");
   });
-  
+
   dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
     dropZone.classList.remove("dragover");
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       // Create a new FileList-like object
       const dt = new DataTransfer();
       dt.items.add(files[0]);
       fileInput.files = dt.files;
-      
+
       // Trigger change event
       const changeEvent = new Event('change', { bubbles: true });
       fileInput.dispatchEvent(changeEvent);
@@ -91,21 +95,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const file = fileInput.files[0];
       const maxSize = 16 * 1024 * 1024; // 16MB
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      
+
       if (file.size > maxSize) {
         feedback.classList.remove("hidden");
         feedback.textContent = "File too large. Maximum size is 16MB.";
         generateBtn.disabled = true;
         return;
       }
-      
+
       if (!allowedTypes.includes(file.type)) {
         feedback.classList.remove("hidden");
         feedback.textContent = "Invalid file type. Only images are allowed.";
         generateBtn.disabled = true;
         return;
       }
-      
+
       feedback.classList.remove("hidden");
       feedback.textContent = "Image uploaded successfully! Click Generate.";
       generateBtn.disabled = false;
@@ -145,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (parseError) {
           console.warn('Could not parse error response:', parseError);
         }
-        
+
         feedback.textContent = errorMessage;
         generateBtn.textContent = "Generate";
         generateBtn.disabled = false;

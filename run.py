@@ -6,7 +6,6 @@ import os
 import sys
 
 def main():
-    # Set environment variables if not already set
     if not os.environ.get('FLASK_DEBUG'):
         os.environ['FLASK_DEBUG'] = 'false'
     
@@ -16,7 +15,6 @@ def main():
     if not os.environ.get('FLASK_PORT'):
         os.environ['FLASK_PORT'] = '5000'
     
-    # Import and run the app
     try:
         from app import app
         print("Starting Image Caption Generator...")
