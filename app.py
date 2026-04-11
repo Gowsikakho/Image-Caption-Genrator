@@ -1,7 +1,13 @@
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except Exception:
+    pass
+
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from generate_caption import CAPTION_MODELS, SUPPORTED_LANGUAGES, generate_caption
+from generate_caption import CAPTION_MODELS, SUPPORTED_LANGUAGES, generate_caption, answer_question
 from config import Config
 import os
 import uuid
@@ -17,7 +23,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # === CORS Configuration ===
-CORS(app, resources={r"/generate_caption": {"origins": app.config['CORS_ORIGINS']}})
+CORS(app, resources={
+    r"/generate_caption": {"origins": app.config['CORS_ORIGINS']},
+    r"/chat": {"origins": app.config['CORS_ORIGINS']},
+})
 
 # === Upload Folder Configuration ===
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -39,20 +48,15 @@ def too_large(error):
     """Handle file too large error."""
     return jsonify({"error": "File too large. Maximum size is 16MB."}), 413
 
+@app.errorhandler(500)
+def internal_error(error):
+    logger.error("Internal server error: %s", error)
+    return jsonify({"error": "Internal server error."}), 500
 
-@app.errorhandler(Exception)
-def handle_unexpected_error(error):
-    """Handle unhandled exceptions and log full traceback."""
-    logger.error("Unhandled exception: %s", error)
-    logger.error(traceback.format_exc())
-
-    if request.path == "/generate_caption":
-        return jsonify({"error": "Unexpected server error while generating caption."}), 500
-
-    return (
-        "Unexpected server error. Please restart the server and try again.",
-        500,
-    )
+@app.route("/favicon.ico")
+def favicon():
+    """Return 204 to silence browser favicon requests."""
+    return '', 204
 
 @app.route("/generate_caption", methods=["POST"])
 def generate():
@@ -117,6 +121,42 @@ def generate():
                 logger.info("File cleaned up: %s", os.path.basename(file_path))
             except OSError as cleanup_error:
                 logger.warning("Could not remove file %s: %s", file_path, cleanup_error)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """Answer a question about an uploaded image using BLIP VQA."""
+    file_path = None
+    try:
+        if 'file' not in request.files:
+            return jsonify({"error": "No image provided"}), 400
+        question = request.form.get("question", "").strip()
+        if not question:
+            return jsonify({"error": "No question provided"}), 400
+
+        file = request.files['file']
+        if file.filename == '' or not allowed_file(file.filename):
+            return jsonify({"error": "Invalid image file"}), 400
+
+        filename = secure_filename(file.filename) or "chat_image"
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{uuid.uuid4()}_{filename}")
+        file.save(file_path)
+
+        caption = request.form.get("caption", "")
+        answer, error = answer_question(file_path, question, caption)
+        if error:
+            return jsonify({"error": error}), 400
+        return jsonify({"answer": answer})
+
+    except Exception as error:
+        logger.error("Chat error: %s", str(error))
+        logger.error(traceback.format_exc())
+        return jsonify({"error": "An error occurred while processing your question"}), 500
+    finally:
+        if file_path and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass
 
 if __name__ == "__main__":
     app.run(debug=app.config['DEBUG'], host=app.config['HOST'], port=app.config['PORT'])

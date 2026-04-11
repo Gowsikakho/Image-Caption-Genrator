@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Luxury AI Caption Generator</title>
-  
+
   <!-- FontAwesome (CORS-safe) -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
 </head>
+
 <body>
   <!-- Background -->
   <div class="background"></div>
@@ -27,6 +26,37 @@
     <ul id="historyList"></ul>
   </div>
 
+  <!-- Explore Popup -->
+  <div id="explorePopup" class="explore-popup hidden">
+    <p>Would you like to explore more about this image?</p>
+    <div class="explore-popup-btns">
+      <button id="exploreYes" class="gold-btn" style="margin-top:0; padding: 8px 22px;">Yes</button>
+      <button id="exploreNo" class="explore-no-btn">No thanks</button>
+    </div>
+  </div>
+
+  <!-- Explore Layout (image+caption left, chatbot right) -->
+  <div id="exploreLayout" class="explore-layout hidden">
+    <div class="explore-left">
+      <img id="explorePanelImg" src="" alt="Uploaded image" />
+      <div class="explore-caption-box">
+        <span class="explore-caption-label">Caption</span>
+        <p id="exploreCaptionText"></p>
+      </div>
+      <button id="backBtn" class="explore-back-btn"><i class="fas fa-arrow-left"></i> Back</button>
+    </div>
+    <div class="explore-right">
+      <div class="chat-header">
+        <i class="fas fa-comments"></i> Ask about this image
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <div class="chat-input-row">
+        <input id="chatInput" type="text" placeholder="Ask something about the image..." />
+        <button id="chatSend" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <div class="container">
     <h1 class="title">AI Caption Generator</h1>
@@ -34,29 +64,30 @@
 
     <!-- Upload Zone -->
     <div id="dropZone" class="drop-zone">
-      <i class="fas fa-cloud-upload-alt upload-icon"></i>
-      <p>
-        Drop an image here or
-        <span class="upload-text">click to upload</span>
-      </p>
+      <div class="drop-zone-default">
+        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+        <p>Drop an image here or <span class="upload-text">click to upload</span></p>
+      </div>
+      <div class="drop-zone-preview hidden">
+        <img id="previewImg" src="" alt="Uploaded preview" />
+        <div class="preview-meta">
+          <span id="previewName" class="preview-name"></span>
+          <span id="previewSize" class="preview-size"></span>
+        </div>
+        <span class="preview-change">click to change</span>
+      </div>
     </div>
 
     <!-- Language Selection -->
     <div class="language-control">
       <label for="languageSelect">Caption language</label>
-      {% set langs = supported_languages if supported_languages is defined else {
-        "en": {"label": "English"},
-        "fr": {"label": "French"},
-        "es": {"label": "Spanish"},
-        "de": {"label": "German"},
-        "it": {"label": "Italian"}
-      } %}
       <select id="languageSelect" class="language-select">
-        {% for code, info in langs.items() %}
-        <option value="{{ code }}" {% if code == "en" %}selected{% endif %}>
-          {{ info.label }}
-        </option>
-        {% endfor %}
+        <option value="en" selected>English</option>
+        <option value="fr">French</option>
+        <option value="es">Spanish</option>
+        <option value="de">German</option>
+        <option value="it">Italian</option>
+        <option value="ta">Tamil</option>
       </select>
     </div>
 
@@ -64,13 +95,13 @@
     <div class="language-control">
       <label for="modelQualitySelect">Model quality</label>
       {% set models = caption_models if caption_models is defined else {
-        "fast": {"label": "BLIP Base (Faster)"},
-        "balanced": {"label": "Balanced Ensemble (Better quality, moderate speed)"},
-        "high": {"label": "BLIP Large (More accurate, slower)"}
+      "fast": {"label": "BLIP Base (Faster)"},
+      "balanced": {"label": "Balanced Ensemble (Better quality, moderate speed)"},
+      "high": {"label": "BLIP Large (More accurate, slower)"}
       } %}
       <select id="modelQualitySelect" class="language-select">
         {% for code, info in models.items() %}
-        <option value="{{ code }}" {% if code == "fast" %}selected{% endif %}>
+        <option value="{{ code }}" {% if code=="fast" %}selected{% endif %}>
           {{ info.label }}
         </option>
         {% endfor %}
@@ -95,4 +126,5 @@
   <!-- External JS -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
